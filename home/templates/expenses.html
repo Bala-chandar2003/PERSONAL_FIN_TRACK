@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* General Styling */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f8f9fa;
+      color: #343a40;
+    }
+
+    /* Header Styling */
+    h4, h5 {
+      color: #007bff;
+      font-size: 1.8rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    h5 {
+      font-size: 1.4rem;
+      color: #28a745;
+    }
+
+    /* Form Container */
+    .form-container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
+    }
+
+    .form-container h4 {
+      color: #28a745;
+    }
+
+    .form-group label {
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    .form-control {
+      border-radius: 5px;
+      border: 1px solid #ced4da;
+      box-shadow: none;
+    }
+
+    .form-control:focus {
+      border-color: #28a745;
+      box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+    }
+
+    .btn-success {
+      background-color: #28a745;
+      border-color: #28a745;
+    }
+
+    .btn-success:hover {
+      background-color: #218838;
+      border-color: #1e7e34;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      border-color: #dc3545;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+      border-color: #bd2130;
+    }
+
+    .ok {
+      color: white;
+      text-decoration: none;
+    }
+
+    .ok:hover {
+      color: white;
+      text-decoration: none;
+    }
+
+    /* Table Styling */
+    .table {
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-top: 30px;
+    }
+
+    .table th, .table td {
+      text-align: center;
+      vertical-align: middle;
+      padding: 15px;
+    }
+
+    .table th {
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+    }
+
+    .table td {
+      background-color: #f8f9fa;
+    }
+
+    .table tr:nth-child(even) td {
+      background-color: #f1f1f1;
+    }
+
+    .table tr:hover td {
+      background-color: #d3d3d3;
+    }
+
+    /* Action Button Styling */
+    .action-buttons a {
+      margin: 0 5px;
+    }
+
+    /* Total Expenses Button */
+    .total-expenses-btn {
+      margin-top: 20px;
+    }
+
+    /* Responsive Styling */
+    @media (max-width: 768px) {
+      .container {
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+
+      .table th, .table td {
+        padding: 10px;
+      }
+
+      .form-container {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container mt-5 col-8">
+  <!-- Greeting Section -->
+  <h4>Welcome, {{ request.user.username }}!</h4>
+  <h5>Monthly Budget: &#x20B9;{{ monthly_budget }}</h5>
+  <h5>Salary: &#x20B9;{{ salary }}</h5>
+
+  <!-- Add Expense Form -->
+  <div class="form-container">
+      <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <h4>Enter Your Expenses</h4>
+          <hr>
+          <div class="form-group">
+            <label for="category">Expense Category</label>
+            <select name="category" class="form-control" required>
+                <option value="" disabled selected>Select Category</option>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Utilities">Utilities</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+              <label for="amount">Amount</label>
+              <input name="amount" type="number" class="form-control" required>
+          </div>
+          <div class="form-group">
+              <label for="date">Date of Expense</label>
+              <input name="date" type="date" class="form-control" required> <!-- New date field -->
+          </div>
+          <button type="submit" class="btn btn-success btn-block">Add Expense</button>
+      </form>
+  </div>
+  
+  <div class="mt-4">
+    <a href="{% url 'pdf' %}" class="btn btn-primary">
+        Download Total Expenses 
+    </a>
+    <a href="{% url 'visualization' %}" class="btn btn-info">
+      View Visualizations
+    </a>
+  </div>
+
+  <!-- Expenses Table -->
+  <div class="table-responsive">
+      <table class="table mt-6">
+          <thead>
+              <tr>
+                  <th scope="col">S.No.</th>
+                  <th scope="col">Expense Category</th>
+                  <th scope="col">Amount</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Actions</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for expense in expenses %}
+              <tr>
+                  <th scope="row">{{ forloop.counter }}</th>
+                  <td>{{ expense.category }}</td>
+                  <td>&#x20B9;{{ expense.amount }}</td>
+                  <td>{{ expense.date }}</td>
+                  <td class="action-buttons">
+                      <a href="/delete_expense/{{ expense.id }}" class="btn btn-danger">Delete</a>
+                      <a href="/update_expense/{{ expense.id }}" class="btn btn-success">Update</a>
+                  </td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+  </div>
+</div>
+</body>
+</html>
