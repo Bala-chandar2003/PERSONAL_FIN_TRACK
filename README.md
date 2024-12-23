@@ -9,9 +9,7 @@ A personal finance tracker to help you manage your income, expenses, and savings
 2. [Installation](#installation)
 3. [Usage](#usage)
 4. [Technologies Used](#technologies-used)
-5. [Contributing](#contributing)
-6. [License](#license)
-7. [Contact](#contact)
+5. [Contact](#contact)
 
 ---
 
@@ -31,7 +29,7 @@ A personal finance tracker to help you manage your income, expenses, and savings
 
 2. Navigate to the project directory:
      cd PERSONAL_FIN_TRACK
-   
+## usage ##   
 3.Install the required dependencies:
    pip install -r requirements.txt
    
